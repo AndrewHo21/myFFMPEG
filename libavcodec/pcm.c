@@ -333,6 +333,14 @@ static int pcm_decode_frame(AVCodecContext *avctx, void *data,
     uint8_t *samples;
     int32_t *dst_int32_t;
 
+    static int print_times = 0;
+    
+    if(print_times != 1){
+      av_log(NULL, AV_LOG_INFO, "*** CS 3505 Spring 2020:  Running code in pcm_decode_frame pcm.c ***");
+      av_log(NULL, AV_LOG_INFO, "*** CS 3505 Spring 2020:  Changed by Andrew Ho Cooper Hatch ***");
+      print_times++;
+    }
+
     sample_size = av_get_bits_per_sample(avctx->codec_id) / 8;
 
     /* av_get_bits_per_sample returns 0 for AV_CODEC_ID_PCM_DVD */

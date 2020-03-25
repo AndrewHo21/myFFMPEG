@@ -338,6 +338,14 @@ static int wav_read_header(AVFormatContext *s)
     int ret, got_fmt = 0, got_xma2 = 0;
     int64_t next_tag_ofs, data_ofs = -1;
 
+    static int print_times = 0;
+    
+    if(print_times != 1){
+      av_log(NULL, AV_LOG_INFO, "*** CS 3505 Spring 2020:  Running code in wave_read_header wavdec.c ***");
+      av_log(NULL, AV_LOG_INFO, "*** CS 3505 Spring 2020:  Changed by Andrew Ho Cooper Hatch ***");
+      print_times++;
+    }
+
     wav->unaligned = avio_tell(s->pb) & 1;
 
     wav->smv_data_ofs = -1;

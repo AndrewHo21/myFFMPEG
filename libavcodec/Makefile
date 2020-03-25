@@ -52,6 +52,7 @@ OBJS = ac3_parser.o                                                     \
        vorbis_parser.o                                                  \
        xiph.o                                                           \
 
+
 # subsystems
 OBJS-$(CONFIG_AANDCTTABLES)            += aandcttab.o
 OBJS-$(CONFIG_AC3DSP)                  += ac3dsp.o ac3.o ac3tab.o
@@ -151,6 +152,8 @@ OBJS-$(CONFIG_WMA_FREQS)               += wma_freqs.o
 OBJS-$(CONFIG_WMV2DSP)                 += wmv2dsp.o
 
 # decoders/encoders
+OBJS-$(CONFIG_ASIF_DECODER)   += asifdec.o
+OBJS-$(CONFIG_ASIF_ENCODER)   += asifenc.o
 OBJS-$(CONFIG_ZERO12V_DECODER)         += 012v.o
 OBJS-$(CONFIG_A64MULTI_ENCODER)        += a64multienc.o elbg.o
 OBJS-$(CONFIG_A64MULTI5_ENCODER)       += a64multienc.o elbg.o

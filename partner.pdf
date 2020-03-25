@@ -1,0 +1,11 @@
+Andrew Ho
+Cooper Hatch
+
+Time/Effort: 4 hours, 5 out of 10
+ most time was reading documentation and waiting for installs
+
+Tasks/Problem Solved:
+DAY 1 - During install, ffplay was not workign through ssh,
+so we decided to install on personal linux machine, and verify that it was running properly
+DAY 2 - Located the files that decoded the file types. Added the required text output.
+Found specified file types to run the ffmpeg on to test and verified that it was working.

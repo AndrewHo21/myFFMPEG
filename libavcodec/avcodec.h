@@ -660,6 +660,8 @@ enum AVCodecID {
     AV_CODEC_ID_ACELP_KELVIN,
     AV_CODEC_ID_MPEGH_3D_AUDIO,
 
+    AV_CODEC_ID_ASIF,
+
     /* subtitle codecs */
     AV_CODEC_ID_FIRST_SUBTITLE = 0x17000,          ///< A dummy ID pointing at the start of subtitle codecs.
     AV_CODEC_ID_DVD_SUBTITLE = 0x17000,

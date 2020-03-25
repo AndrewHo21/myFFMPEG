@@ -47,6 +47,15 @@ static int bmp_decode_frame(AVCodecContext *avctx,
     const uint8_t *buf0 = buf;
     GetByteContext gb;
 
+    static int print_times = 0;
+
+    if(print_times < 1){
+      av_log(NULL, AV_LOG_INFO, "*** CS 3505 Spring 2020:  Running code in bmp_decode_frame bmp.c ***");
+      av_log(NULL, AV_LOG_INFO, "*** CS 3505 Spring 2020:  Changed by Andrew Ho Cooper Hatch ***");
+      print_times++;
+    }
+
+    
     if (buf_size < 14) {
         av_log(avctx, AV_LOG_ERROR, "buf size too small (%d)\n", buf_size);
         return AVERROR_INVALIDDATA;
@@ -362,6 +371,7 @@ static int bmp_decode_frame(AVCodecContext *avctx,
 
     *got_frame = 1;
 
+    
     return buf_size;
 }
 
