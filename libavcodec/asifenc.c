@@ -31,8 +31,22 @@
 #include "put_bits.h"
 #include "bytestream.h"
 
+typedef struct asif_encoder_data{
+  int x;
+  int y;
+
+  asif_encoder_data *other;
+}asif_encoder_data;
+
 static av_cold int asif_encode_init(AVCodecContext *avctx)
 {
+    asif_encoder_data *my_data;
+
+    my_data = avctx->priv_data;
+    my_data->x = 42;
+    my_data->y = 3.7;
+    my_data->other = NULL;
+  
     av_log(avctx, AV_LOG_INFO, "executing inside of asif_encode_int\n");
 
     avctx->frame_size = 1000000;
@@ -75,11 +89,14 @@ static av_cold int asif_encode_close(AVCodecContext *avctx)
 
 AVCodec ff_asif_encoder = {
     .name           = "asif",
+    .priv_data_size = sizeof(asif_encoder_data),
     .long_name      = NULL_IF_CONFIG_SMALL("ASIF audio file (CS 3505 Spring 20202)"),
     .type           = AVMEDIA_TYPE_AUDIO,
     .id             = AV_CODEC_ID_ASIF,
     .init           = asif_encode_init,
-    .encode2        = asif_encode_frame,
+    //.encode2        = asif_encode_frame,
+    .send_frame     =
+    .receive_packet = 
     .close          = asif_encode_close,
     .capabilities   = AV_CODEC_CAP_SMALL_LAST_FRAME,
     .sample_fmts    = (const enum AVSampleFormat[]){ AV_SAMPLE_FMT_U8P,
