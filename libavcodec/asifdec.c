@@ -1084,68 +1084,18 @@ static void wavpack_decode_flush(AVCodecContext *avctx)
         wv_reset_saved_context(s->fdec[i]);
 }
 
-static int wavpack_decode_frame(AVCodecContext *avctx, void *data,
+static int asif_decode_frame(AVCodecContext *avctx, void *data,
                                 int *got_frame_ptr, AVPacket *avpkt)
 {
-    WavpackContext *s  = avctx->priv_data;
-    const uint8_t *buf = avpkt->data;
-    int buf_size       = avpkt->size;
-    AVFrame *frame     = data;
-    int frame_size, ret, frame_flags;
-
-    if (avpkt->size <= WV_HEADER_SIZE)
-        return AVERROR_INVALIDDATA;
-
-    s->block     = 0;
-    s->ch_offset = 0;
-
-    /* determine number of samples */
-    s->samples  = AV_RL32(buf + 20);
-    frame_flags = AV_RL32(buf + 24);
-    if (s->samples <= 0 || s->samples > WV_MAX_SAMPLES) {
-        av_log(avctx, AV_LOG_ERROR, "Invalid number of samples: %d\n",
-               s->samples);
-        return AVERROR_INVALIDDATA;
-    }
-
-    if (frame_flags & 0x80) {
-        avctx->sample_fmt = AV_SAMPLE_FMT_FLTP;
-    } else if ((frame_flags & 0x03) <= 1) {
-        avctx->sample_fmt = AV_SAMPLE_FMT_S16P;
-    } else {
-        avctx->sample_fmt          = AV_SAMPLE_FMT_S32P;
-        avctx->bits_per_raw_sample = ((frame_flags & 0x03) + 1) << 3;
-    }
-
-    while (buf_size > WV_HEADER_SIZE) {
-        frame_size = AV_RL32(buf + 4) - 12;
-        buf       += 20;
-        buf_size  -= 20;
-        if (frame_size <= 0 || frame_size > buf_size) {
-            av_log(avctx, AV_LOG_ERROR,
-                   "Block %d has invalid size (size %d vs. %d bytes left)\n",
-                   s->block, frame_size, buf_size);
-            wavpack_decode_flush(avctx);
-            return AVERROR_INVALIDDATA;
-        }
-        if ((ret = wavpack_decode_block(avctx, s->block,
-                                        frame, buf, frame_size)) < 0) {
-            wavpack_decode_flush(avctx);
-            return ret;
-        }
-        s->block++;
-        buf      += frame_size;
-        buf_size -= frame_size;
-    }
-
-    if (s->ch_offset != avctx->channels) {
-        av_log(avctx, AV_LOG_ERROR, "Not enough channels coded in a packet.\n");
-        return AVERROR_INVALIDDATA;
-    }
-
-    *got_frame_ptr = 1;
-
-    return avpkt->size;
+	AVFrame *frame;
+	
+	frame = data;
+	
+	//Populate frame samples, channel, formate so frame has the correct format information
+	
+	ff_get_buffer
+	
+	//Move in data samples
 }
 
 AVCodec ff_asif_decoder = {
@@ -1153,11 +1103,6 @@ AVCodec ff_asif_decoder = {
     .long_name      = NULL_IF_CONFIG_SMALL("ASIF audio file (CS 3505 Spring 20202)"),
     .type           = AVMEDIA_TYPE_AUDIO,
     .id             = AV_CODEC_ID_ASIF,
-    .priv_data_size = sizeof(WavpackContext),
-    .init           = wavpack_decode_init,
-    .close          = wavpack_decode_end,
-    .decode         = wavpack_decode_frame,
-    .flush          = wavpack_decode_flush,
-    .init_thread_copy = ONLY_IF_THREADS_ENABLED(init_thread_copy),
-    .capabilities   = AV_CODEC_CAP_DR1 | AV_CODEC_CAP_FRAME_THREADS,
+    .decode         = asif_decode_frame,
+    .capabilities   = AV_CODEC_CAP_DR1
 };
