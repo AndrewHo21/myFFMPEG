@@ -53,6 +53,26 @@ static av_cold int asif_encode_init(AVCodecContext *avctx)
     
     return 0;
 }
+// AVCodecContext holds private variables
+static int asif_send_frame(AVCodecContext *avctx, const AVFrame *frame)
+{
+  uint8_t *buf;
+  
+  // Receiving
+  // Always returns 0
+  // Once null frame received, done
+  // AV error is used to receive more frames
+  // Private buffer
+  return 0;
+}
+
+static int asif_receive_packet(AVCodecContext *avctx, AVPacket *avpkt)
+{
+  // Filling
+  // Only one that returns not 0
+  // EOF once done receiving frames
+  return 0;
+}
 
 static int asif_encode_frame(AVCodecContext *avctx, AVPacket *avpkt,
                                 const AVFrame *frame, int *got_packet_ptr)
@@ -95,8 +115,8 @@ AVCodec ff_asif_encoder = {
     .id             = AV_CODEC_ID_ASIF,
     .init           = asif_encode_init,
     //.encode2        = asif_encode_frame,
-    .send_frame     =
-    .receive_packet = 
+    .send_frame     = asif_send_frame,
+    .receive_packet = asif_receive_packet,
     .close          = asif_encode_close,
     .capabilities   = AV_CODEC_CAP_SMALL_LAST_FRAME,
     .sample_fmts    = (const enum AVSampleFormat[]){ AV_SAMPLE_FMT_U8P,
