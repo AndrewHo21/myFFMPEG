@@ -22,6 +22,8 @@
 #include "avformat.h"
 #include "rawenc.h"
 
+/* Writes a packet using the packet data that was given via asif_receive_packet from the encoder file
+ */
 static int asif_write_packet(AVFormatContext *s, AVPacket *pkt){
   avio_write(s->pb , pkt->data, pkt->size);
   return 0;

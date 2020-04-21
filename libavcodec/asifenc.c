@@ -31,6 +31,8 @@
 #include "put_bits.h"
 #include "bytestream.h"
 
+/* Struct used to hold private vairables so that data can be accessed in the functions
+ */
 typedef struct asif_encoder_data{
 	
 	int num_of_samples;
@@ -40,9 +42,12 @@ typedef struct asif_encoder_data{
 	int x;
 	double y;
 	
-	asif_encoder_data *other;
+	//sif_encoder_data *other;
 }asif_encoder_data;
 
+/*Initializes the data that is stored in the asif_encoder_data struct
+ *and initializes any private variable that is being used in AVCodec and AVCodecContext
+ */
 static av_cold int asif_encode_init(AVCodecContext *avctx)
 {
     asif_encoder_data *my_data;
@@ -50,7 +55,7 @@ static av_cold int asif_encode_init(AVCodecContext *avctx)
     my_data = avctx->priv_data;
     my_data->x = 42;
     my_data->y = 3.7;
-    my_data->other = NULL;
+    //my_data->other = NULL;
 	my_data-> last_frame_received = 0;
   
     av_log(avctx, AV_LOG_INFO, "executing inside of asif_encode_int\n");
@@ -60,6 +65,8 @@ static av_cold int asif_encode_init(AVCodecContext *avctx)
     return 0;
 }
 
+/* Uses frames that are taken from an audio file and data to a private data structure so that it can be accessed by asif_recieve_frames
+ */
 static int asif_send_frame(AVCodecContext *avctx, const AVFrame *frame){
 	
 	asif_encoder_data *my_data;
@@ -68,10 +75,10 @@ static int asif_send_frame(AVCodecContext *avctx, const AVFrame *frame){
 	//Those indexes in the priv_data will be filled with buffer
 	
     //creates buf to hold all frames? 
-	uint8_t *buf = av_malloc(priv_data_size);
+	uint8_t *buf = av_malloc(sizeof(asif_encoder_data));
 	
 	//allocate space to hold *bufs
-    avctx->priv_data = av_malloc(priv_data_size);
+    avctx->priv_data = av_malloc(sizeof(asif_encoder_data));
 
 	//When receive a NULL frame from frame, throw flag
 	if(frame == NULL)
@@ -84,10 +91,14 @@ static int asif_send_frame(AVCodecContext *avctx, const AVFrame *frame){
 	
 }
 
+/* Will access the private data structure that was allocated in asif_send_frames, 
+ * and will take each frame and add it to a packet the correct order that each frame was add.
+ */
 static int asif_receive_packet(AVCodecContext *avctx, AVPacket *avpkt){
 	asif_encoder_data *my_data;
 	my_data = avctx->priv_data;
 	
+	//Sends AVERROR(EAGAIN) if there are still frames missing from the data structure, or if the frames received aren't completed
 	if(!my_data->last_frame_received)
 		return AVERROR(EAGAIN);
 	
@@ -96,31 +107,8 @@ static int asif_receive_packet(AVCodecContext *avctx, AVPacket *avpkt){
 	return 0;
 }
 
-static int asif_encode_frame(AVCodecContext *avctx, AVPacket *avpkt,
-                                const AVFrame *frame, int *got_packet_ptr)
-{
-    int ret;
-    uint8_t *buf;
-    
-    av_log(avctx, AV_LOG_INFO, "executing inside of asif_encode_frame\n");
-    
-    if ((ret = ff_alloc_packet2(avctx, avpkt, 16, 16)) < 0)
-     return ret;
-
-    buf = avpkt->data;
-
-    buf[0] = 'Y';
-    buf[1] = 'e';
-    buf[2] = 'e';
-    buf[3] = 't';
-
-    for (int i = 4; i < 16; i++)
-      buf[i] = ' ';
-    
-    *got_packet_ptr = 1;
-    return 0;
-}
-
+/* Ends the process of encoding data
+ */
 static av_cold int asif_encode_close(AVCodecContext *avctx)
 {
 
@@ -136,7 +124,6 @@ AVCodec ff_asif_encoder = {
     .type           = AVMEDIA_TYPE_AUDIO,
     .id             = AV_CODEC_ID_ASIF,
     .init           = asif_encode_init,
-    //.encode2        = asif_encode_frame,
     .send_frame     = asif_send_frame,
     .receive_packet = asif_receive_packet,
     .close          = asif_encode_close,
